@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Todo Demo</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="lib/react.js"></script>
+    <script src="lib/react-dom.js"></script>
+    <script src="lib/browser.min.js"></script>
+    <style type="text/css">
+
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: "microsoft yahei";
+        }
+
+        body {
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        .input-area {
+            margin-bottom: 30px;
+        }
+
+        .todo-li {
+            width: 185px;
+            height: 14px;
+            line-height: 14px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #dadee7;
+            padding-bottom: 14px;
+        }
+
+        .todo-li:last-child {
+            border-bottom: none;
+        }
+
+        .act-del {
+            cursor: pointer;
+            float: right;
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background: url("images/icon-close.png") no-repeat;
+        }
+    </style>
+  </head>
+  <body>
+    <h2>React Todo Demo</h2>
+    <div id="example"></div>
+    <script type="text/babel">
+
+        var TodoLi = React.createClass({
+
+            onDel: function(e) {
+                var props = this.props,
+                    todos = props.todos,
+                    index = props.index,
+                    update = props.update;
+                // if (confirm('Delete this item?')) {
+                    todos.splice(index, 1);
+                    update(todos);
+                // }
+            },
+
+            render: function() {
+                return (
+                    <li className="todo-li">
+                        <span>{Number(this.props.index) + 1}.</span>
+                        <span>{this.props.children}</span>
+                        <span className="act-del" onClick={this.onDel} title="delete this item"></span>
+                    </li>
+                );
+            }
+        });
+
+        var TodoList = React.createClass({
+
+            getInitialState: function() {
+                return {
+                    todos: []
+                };
+            },
+
+            onAdd: function(e) {
+                var todos = this.state.todos,
+                    todoInput = this.refs.todoInput,
+                    content = todoInput.value;
+                todos.push(content);
+                todoInput.value = '';
+                this.setState({
+                    todos: todos
+                });
+            },
+
+            update: function(todos) {
+                this.setState({
+                    todos: todos
+                });
+            },
+
+            render: function() {
+                var todos = this.state.todos,
+                    update = this.update;
+                return (
+                    <div>
+                        <div className="input-area">
+                            <input type="text" ref="todoInput" />
+                            <input type="button" value="Add" onClick={this.onAdd} />
+                        </div>
+                        <ul className="list-area">
+                            {
+                                todos.map(function(todo, i) {
+                                    return <TodoLi key={i} index={i} update={update} todos={todos}>{todo}</TodoLi>
+                                })
+                            }
+                        </ul>
+                    </div>
+                );
+            }
+        });
+
+        ReactDOM.render(
+          <TodoList />,
+          document.getElementById('example')
+        );
+
+    </script>
+  </body>
+</html>
